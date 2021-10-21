@@ -1,20 +1,27 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from time import sleep
+import os
 
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException, StaleElementReferenceException
 
-FB_EMAIL = "lookatemail@gmail.com"
-FB_PASSWORD = "rybzij-hyvzyd-7mArbe"
+EMAIL = os.environ['EMAIL']
+PASSWORD = os.environ['PASSWORD']
+WEB_APP = os.environ['WEB_APP']
 
 chrome_driver_path = "../ChromeDriver/chromedriver_94"
 ser_obj = Service(chrome_driver_path)
-driver = webdriver.Chrome(service=ser_obj)
 
-driver.get("http://www.tinder.com")
+options_obj = webdriver.ChromeOptions()
+# chrome browser config. Disable notifications
+prefs = {"profile.default_content_setting_values.notifications" : 2}
+options_obj.add_experimental_option("prefs", prefs)
+
+driver = webdriver.Chrome(service=ser_obj, options=options_obj)
+
+driver.get(WEB_APP)
 
 sleep(2)
 # accept_privacy = driver.find_element_by_xpath('//*[@id="c-364499427"]/div/div[2]/div/div/div[1]/button')
@@ -46,8 +53,8 @@ accept_cookies.click()
 sleep(1)
 email = driver.find_element(By.XPATH, "//*[contains(@name,'email')]")
 password = driver.find_element(By.XPATH, "//*[contains(@name,'pass')]")
-email.send_keys(FB_EMAIL)
-password.send_keys(FB_PASSWORD)
+email.send_keys(EMAIL)
+password.send_keys(PASSWORD)
 password.send_keys(Keys.ENTER)
 
 # Switch back to Tinder window
@@ -90,41 +97,41 @@ swipe_left = True
 total_likes = 0
 
 #Tinder free tier only allows 100 "Likes" per day. If you have a premium account, feel free to change to a while loop.
-while swipe_left:
-    # Add a 1 second delay between likes.
-    sleep(0.5)
-    try:
-        like_button.click()
-        total_likes += 1
-        print('Total likes: ' + str(total_likes))
-    # Catches the cases where there is a "Matched" pop-up in front of the "Like" button:
-    except (ElementClickInterceptedException, StaleElementReferenceException):
-        try:
-            # match_popup = driver.find_element(By.CSS_SELECTOR, "span[class='D(f) W(100%) CenterAlign']")
-            # match_popup = driver.find_element_by_css_selector(".itsAMatch a")
-            match_popup = driver.find_element(By.XPATH, "//span[contains(text(),'Keep swiping')]")
-            match_popup.click()
-        # Catches the cases where the "Like" button has not yet loaded, so wait 2 seconds before retrying.
-        except NoSuchElementException:
-            try:
-                popup = driver.find_element(By.XPATH, "//span[contains(text(),'No Thanks')]")
-                popup.click()
-            except NoSuchElementException:
-                try:
-                    popup = driver.find_element(By.XPATH, "//span[contains(text(),'Not interested')]")
-                    popup.click()
-                except NoSuchElementException:
-                    try:
-                        sleep(2)
-                        like_button.click()
-                        total_likes += 1
-                        print('Total likes: ' + str(total_likes))
-                    except NoSuchElementException:
-                        try:
-                            popup = driver.find_element(By.XPATH, "//span[contains(text(),'Discovery settings')]")
-                            print('No more matches in the area error. Total likes: ' + str(total_likes))
-                            driver.quit()
-                        except NoSuchElementException:
-                            sleep(2)
+# while swipe_left:
+#     # Add a 1 second delay between likes.
+#     sleep(0.5)
+#     try:
+#         like_button.click()
+#         total_likes += 1
+#         print('Total likes: ' + str(total_likes))
+#     # Catches the cases where there is a "Matched" pop-up in front of the "Like" button:
+#     except (ElementClickInterceptedException, StaleElementReferenceException):
+#         try:
+#             # match_popup = driver.find_element(By.CSS_SELECTOR, "span[class='D(f) W(100%) CenterAlign']")
+#             # match_popup = driver.find_element_by_css_selector(".itsAMatch a")
+#             match_popup = driver.find_element(By.XPATH, "//span[contains(text(),'Keep swiping')]")
+#             match_popup.click()
+#         # Catches the cases where the "Like" button has not yet loaded, so wait 2 seconds before retrying.
+#         except NoSuchElementException:
+#             try:
+#                 popup = driver.find_element(By.XPATH, "//span[contains(text(),'No Thanks')]")
+#                 popup.click()
+#             except NoSuchElementException:
+#                 try:
+#                     popup = driver.find_element(By.XPATH, "//span[contains(text(),'Not interested')]")
+#                     popup.click()
+#                 except NoSuchElementException:
+#                     try:
+#                         sleep(2)
+#                         like_button.click()
+#                         total_likes += 1
+#                         print('Total likes: ' + str(total_likes))
+#                     except NoSuchElementException:
+#                         try:
+#                             popup = driver.find_element(By.XPATH, "//span[contains(text(),'Discovery settings')]")
+#                             print('No more matches in the area error. Total likes: ' + str(total_likes))
+#                             driver.quit()
+#                         except NoSuchElementException:
+#                             sleep(2)
 
 # driver.quit()

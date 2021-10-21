@@ -9,7 +9,7 @@ from selenium.common.exceptions import ElementClickInterceptedException, NoSuchE
 
 EMAIL = os.environ['EMAIL']
 PASSWORD = os.environ['PASSWORD']
-WEB_APP = os.environ['WEB_APP']
+WEB_URL = os.environ['WEB_URL']
 
 chrome_driver_path = "../ChromeDriver/chromedriver_94"
 ser_obj = Service(chrome_driver_path)
@@ -21,7 +21,7 @@ prefs = {}
 options_obj.add_experimental_option("prefs", prefs)
 
 driver = webdriver.Chrome(service=ser_obj, options=options_obj)
-driver.get(WEB_APP)
+driver.get(WEB_URL)
 sleep(2)
 
 # accept_privacy = driver.find_element_by_xpath('//*[@id="c-364499427"]/div/div[2]/div/div/div[1]/button')
